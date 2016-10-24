@@ -13,10 +13,10 @@ Steps to create this repo:
 Steps to create a `Book` repo that follows this pattern
 
 1.  `npm init` -- Initialize the repository
-2.  `touch index.js` -- Create the index.js file.
 3.  `npm install gpub-go --save-dev`
-4.  Copy an SGF from [Go Game
+4.  Copy an SGF (or SGFs) from somewhere. For this repo, I've largely used SGFs
+    from [Go Game
     Guru](https://gogameguru.com/go-commentary-lee-sedol-vs-alphago-game-1/)
-5.  Finish adding content to `index.js`
+5.  Add the relevant scripting to `index.js`. See some example directories for examples.
 6.  Run with `node index.js`
 7.  Compile a LaTeX book with `pdflatex mybook.tex`
