@@ -1,0 +1,27 @@
+{
+  "name": "gpub-example",
+  "version": "1.0.0",
+  "description": "Gpub examples",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kashomon/gpub-example.git"
+  },
+  "keywords": [
+    "GPub",
+    "baduk",
+    "go"
+  ],
+  "author": "jrhoak",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kashomon/gpub-example/issues"
+  },
+  "homepage": "https://github.com/Kashomon/gpub-example#readme",
+  "devDependencies": {
+    "gpub-go": "^0.3.1"
+  }
+}
