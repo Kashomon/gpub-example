@@ -16,7 +16,7 @@ var g = gpub.init({
   .createSpec()
   .processSpec()
   .renderDiagramsStream(function(d) {
-    fs.writeFile('diagrams/' + d.id + '.tex', d.rendered)
+    fs.writeFile('diagrams/' + d.id + '.out.tex', d.rendered)
   });
 
 fs.writeFileSync('gpub_spec.json', g.jsonSpec())

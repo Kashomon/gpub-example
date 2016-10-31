@@ -37,7 +37,7 @@ jspm_packages
 .node_repl_history
 
 # Diagrams should be generated on the fly
-*/diagrams/*
+*.out.*
 # LaTeX metadata files
 *.aux
 *.log

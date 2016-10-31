@@ -10,9 +10,9 @@ Steps to create this repo:
 * You have [LaTeX](https://www.latex-project.org/) installed
 * You installed the [go-type1](https://github.com/Kashomon/go-type1) fonts
 
-Steps to create a `Book` repo that follows this pattern
+Steps to create a `Book` repo that follows these patterns:
 
-1.  `npm init` -- Initialize the repository
+1.  `npm init` -- Initialize the repository (requires installing nodejs/npm)
 3.  `npm install gpub-go --save-dev`
 4.  Copy an SGF (or SGFs) from somewhere. For this repo, I've largely used SGFs
     from [Go Game
