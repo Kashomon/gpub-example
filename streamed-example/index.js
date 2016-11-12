@@ -19,6 +19,8 @@ var g = gpub.init({
     fs.writeFile('diagrams/' + d.id + '.out.tex', d.rendered)
   });
 
+fs.writeFile('metadata.json', JSON.stringify(g.diagrams().metadata))
+
 fs.writeFileSync('gpub_spec.json', g.jsonSpec())
 
 
