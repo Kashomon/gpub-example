@@ -1,10 +1,12 @@
 var fs = require('fs');
 var gpub = require('gpub-go');
 
-var baseDir = __dirname
+var files = fs.readdirSync('./ggg-easy')
+console.log(files);
 
+/*
 var contents = fs.readFileSync(
-  baseDir + '/20160309-Lee-Sedol-vs-AlphaGo-Commentary-An-Younggil.sgf',
+  '20160309-Lee-Sedol-vs-AlphaGo-Commentary-An-Younggil.sgf',
   'utf8');
 
 var g = gpub.init({
@@ -18,13 +20,14 @@ var g = gpub.init({
   .createSpec()
   .processSpec()
   .renderDiagramsStream(function(d) {
-    fs.writeFile(baseDir + '/diagrams/' + d.id + '.out.tex', d.rendered)
+    fs.writeFile('diagrams/' + d.id + '.out.tex', d.rendered)
   });
 
 fs.writeFile('metadata.json', JSON.stringify(g.diagrams().metadata))
 
 fs.writeFileSync('gpub_spec.json', g.jsonSpec())
 
+*/
 
 
 // TODO(kashomon): Add book generation when it's done.
