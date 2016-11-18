@@ -1,5 +1,6 @@
 var fs = require('fs');
 var gpub = require('gpub-go');
+var book = require('./book_renderer.js')
 
 var baseDir = __dirname
 
@@ -7,7 +8,7 @@ var dir = baseDir + '/ggg-easy/';
 var out = baseDir + '/diagrams/';
 
 if (!fs.existsSync(out)){
-    fs.mkdirSync(out);
+  fs.mkdirSync(out);
 }
 
 var files = fs.readdirSync(dir)
@@ -24,20 +25,39 @@ var files = fs.readdirSync(dir)
     return 0;
   });
 
-var contents = []
+var contents = files.map(f => fs.readFileSync(dir + f, 'utf8'));
 
-files.forEach(f => contents.push(fs.readFileSync(dir + f, 'utf8')));
+// To make the filenames look nicer, replace the .sgf with _sgf.
+ids = files.map(f => f.replace(/\./g, '_'))
+
+/**
+ * Simple function that transforms IDs into diagram filenames
+ */
+var idFuncMaker = (outDir) => {
+  var dir_ = outDir; // to indicate closure;
+  return (id) => {
+    return outDir + id + '.out.tex';
+  }
+};
+var idFn = idFuncMaker(out);
 
 var g = gpub.init({
     sgfs: contents,
-    ids: files,
+    ids: ids,
+    specOptions: {
+      positionType: 'PROBLEM',
+    },
   })
   .createSpec()
   .processSpec()
   .renderDiagramsStream(function(d) {
-    fs.writeFile('diagrams/' + d.id + '.out.tex', d.rendered)
+    fs.writeFile(idFn(d.id), d.rendered)
   });
 
-fs.writeFile('metadata.json', JSON.stringify(g.diagrams().metadata))
+// These steps not necessary, but here for illustration.
+// fs.writeFile('metadata.json', JSON.stringify(g.diagrams().metadata))
+// fs.writeFileSync('gpub_spec.json', g.jsonSpec())
 
-fs.writeFileSync('gpub_spec.json', g.jsonSpec())
+fs.writeFileSync(
+  'ggg_easy.tex',
+  book.render(g.spec(), g.diagrams().metadata, idFn));
