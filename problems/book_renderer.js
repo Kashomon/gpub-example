@@ -18,7 +18,10 @@ var renderBook = function(spec, diagramMeta, idFn) {
       if (g.labels[0] === 'PROBLEM_ROOT') {
         content +=
           '\n' +
-          '\\input{' + idFn(g.id) + '}\n'
+          '\\begin{minipage}[t]{20pt}' +
+          '\\input{' + idFn(g.id) + '}\n' +
+          '\\end{minipage}\n' +
+          '\\vfill\n'
       }
     });
   })
