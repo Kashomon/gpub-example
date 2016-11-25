@@ -26,6 +26,22 @@ var renderBook = function(spec, diagramMeta, idFn) {
     });
   })
 
+  spec.rootGrouping.positions.forEach(pos => {
+    var gen = spec.rootGrouping.generated[pos.id]
+    if (!gen) { return; }
+    gen.positions.forEach(g => {
+      if (g.labels[0] !== 'PROBLEM_ROOT') {
+        content +=
+          '\n' +
+          '\\begin{minipage}[t]{20pt}' +
+          '\\input{' + idFn(g.id) + '}\n' +
+          '\\end{minipage}\n' +
+          '\\vfill\n'
+      }
+    });
+  })
+
+
   content += '\\end{document}'
 
   return content;
