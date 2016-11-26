@@ -17,11 +17,9 @@ var renderBook = function(spec, diagramMeta, idFn) {
     gen.positions.forEach(g => {
       if (g.labels[0] === 'PROBLEM_ROOT') {
         content +=
-          '\n' +
-          '\\begin{minipage}[t]{20pt}' +
-          '\\input{' + idFn(g.id) + '}\n' +
-          '\\end{minipage}\n' +
-          '\\vfill\n'
+          '\\begin{minipage}[t]{0.5\\textwidth}\n' +
+          '  \\input{' + idFn(g.id) + '}\n' +
+          '\\end{minipage}\n'
       }
     });
   })
@@ -32,11 +30,9 @@ var renderBook = function(spec, diagramMeta, idFn) {
     gen.positions.forEach(g => {
       if (g.labels[0] !== 'PROBLEM_ROOT') {
         content +=
-          '\n' +
-          '\\begin{minipage}[t]{20pt}' +
-          '\\input{' + idFn(g.id) + '}\n' +
-          '\\end{minipage}\n' +
-          '\\vfill\n'
+          '\\begin{minipage}[t]{0.5\\textwidth}\n' +
+          '  \\input{' + idFn(g.id) + '}\n' +
+          '\\end{minipage}\n'
       }
     });
   })
