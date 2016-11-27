@@ -52,7 +52,7 @@ var renderBook = function(spec, diagramMeta, idFn) {
   // TODO(kashomon): Currently there's not a good way to associate diagram
   // metadata back to the original SGF. Concretely, there's not a good way to
   // associate the problem answer with the problem, if you're just looking at
-  // the 
+  // the metadata.
   spec.rootGrouping.positions.forEach(pos => {
     var gen = spec.rootGrouping.generated[pos.id]
     if (!gen) { return; }
