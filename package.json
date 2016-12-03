@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/Kashomon/gpub-example#readme",
   "devDependencies": {
-    "gpub-go": "^0.3.5"
+    "gpub-go": "^0.3.6"
   }
 }

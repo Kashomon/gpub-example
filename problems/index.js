@@ -34,9 +34,10 @@ ids = files.map(f => f.replace(/\./g, '_'))
  * Simple function that transforms IDs into diagram filenames
  */
 var idFuncMaker = (outDir) => {
-  var dir_ = outDir; // to indicate closure;
-  return (id) => {
-    return outDir + id + '.out.tex';
+  var base_ = baseDir;
+  return (style, id) => {
+    return base_ + '/' + style.toLowerCase() + '/diagrams/' +
+        id + '.out.tex';
   }
 };
 var idFn = idFuncMaker(out);
@@ -49,15 +50,21 @@ var g = gpub.init({
     },
   })
   .createSpec()
-  .processSpec()
-  .renderDiagramsStream(function(d) {
-    fs.writeFile(idFn(d.id), d.rendered)
+  .processSpec();
+
+// TODO(kashomon): This doesn't work the way we want since the api-container is
+// mutable. Ew. This should make a new version at each step.
+for (var style in {'IGO':1, 'GNOS':1}) {
+  g.renderDiagramsStream(function(d) {
+    fs.writeFile(idFn(style, d.id), d.rendered)
+  }, {
+    diagramType: style,
   });
+  fs.writeFileSync(
+    style.toLowerCase() + '/' + 'ggg_easy.tex',
+    book.render(style, g.spec(), g.diagrams().metadata, idFn));
+}
 
 // These steps not necessary, but here for illustration.
 // fs.writeFile('metadata.json', JSON.stringify(g.diagrams().metadata))
 // fs.writeFileSync('gpub_spec.json', g.jsonSpec())
-
-fs.writeFileSync(
-  'ggg_easy.tex',
-  book.render(g.spec(), g.diagrams().metadata, idFn));

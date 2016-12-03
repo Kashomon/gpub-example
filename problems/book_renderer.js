@@ -1,15 +1,26 @@
 /**
  * Render a problem book!
+ * style: the diagram style
  * spec: gpub spec
  * diagramMeta: metadata for diagrams.
  * idFn: function to transform IDs to filenames
  */
-var renderBook = function(spec, diagramMeta, idFn) {
-  var content = '\\documentclass[11pt]{article}\n' +
-    '\\usepackage{gnos}\n' +
-    '\\usepackage[cmyk]{xcolor}\n' +
-    '\\setlength{\\parindent}{0pt}\n' +
-    '\\begin{document}\n'
+var renderBook = function(style, spec, diagramMeta, idFn) {
+  var content = '\\documentclass[11pt]{article}\n';
+
+  if (style == 'GNOS') {
+    content += 
+      '\\usepackage{gnos}\n' +
+      '\\usepackage[cmyk]{xcolor}\n' +
+      '\\setlength{\\parindent}{0pt}\n'
+  } else if (style === 'IGO') {
+    content +=
+      '\\usepackage{igo}\n' +
+      '\\setlength{\\parindent}{0pt}\n';
+  }
+
+
+  content += '\\begin{document}\n'
 
   // TODO(kashomon): There should probably be generally looping functionality.
 
@@ -39,8 +50,12 @@ var renderBook = function(spec, diagramMeta, idFn) {
         content +=
           '\\begin{minipage}[t]{0.5\\textwidth}\n' +
           '  {\\centering\n' +
-          '  \\input{' + idFn(g.id) + '}\n' +
-          '  Problem: (' + index + ')\\\\\n' +
+          '  \\input{' + idFn(style, g.id) + '}\n'
+        if (style === 'IGO') {
+          content += '\\\\\n'
+        }
+
+        content += '  Problem: (' + index + ')\\\\\n' +
           '  ' + comment + '\n' +
           '  }\n' +
           '\\end{minipage}\n'
@@ -67,12 +82,13 @@ var renderBook = function(spec, diagramMeta, idFn) {
         content +=
           '\\begin{minipage}[t]{0.5\\textwidth}\n' +
           '  {\\centering\n' +
-          '  \\input{' + idFn(g.id) + '}\n' +
-          '  Answers to Problem (' + index + ')\\\\\n' +
-          '  Status: ' + g.labels[0] + '\\\\\n' +
+          '  \\input{' + idFn(style, g.id) + '}\n'
+
+        content += '  Problem: (' + index + ')\\\\\n' +
           '  ' + comment + '\n' +
           '  }\n' +
           '\\end{minipage}\n'
+        index++;
       }
     });
   })
