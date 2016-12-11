@@ -52,17 +52,18 @@ var g = gpub.init({
   .createSpec()
   .processSpec();
 
-// TODO(kashomon): This doesn't work the way we want since the api-container is
-// mutable. Ew. This should make a new version at each step.
+// TODO(kashomon): Should this logic be included in the gpub API?
 for (var style in {'IGO':1, 'GNOS':1}) {
-  g.renderDiagramsStream(function(d) {
-    fs.writeFile(idFn(style, d.id), d.rendered)
-  }, {
-    diagramType: style,
-  });
+  var g = g.renderDiagramsStream(function(d) {
+        fs.writeFile(idFn(style, d.id), d.rendered)
+      }, {
+        diagramType: style,
+      })
+  var bookMaker = g.bookMaker();
+
   fs.writeFileSync(
     style.toLowerCase() + '/' + 'ggg_easy.tex',
-    book.render(style, g.spec(), g.diagrams().metadata, idFn));
+    book.render(style, bookMaker, idFn));
 }
 
 // These steps not necessary, but here for illustration.

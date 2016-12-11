@@ -1,97 +1,64 @@
 /**
  * Render a problem book!
  * style: the diagram style
- * spec: gpub spec
- * diagramMeta: metadata for diagrams.
+ * bookMaker: the bookmaker helper
  * idFn: function to transform IDs to filenames
  */
-var renderBook = function(style, spec, diagramMeta, idFn) {
+var renderBook = function(style, bookMaker, idFn) {
   var content = '\\documentclass[11pt]{article}\n';
 
   if (style == 'GNOS') {
-    content += 
-      '\\usepackage{gnos}\n' +
-      '\\usepackage[cmyk]{xcolor}\n' +
-      '\\setlength{\\parindent}{0pt}\n'
-  } else if (style === 'IGO') {
     content +=
-      '\\usepackage{igo}\n' +
-      '\\setlength{\\parindent}{0pt}\n';
+      '\\usepackage{gnos}\n' +
+      '\\usepackage[cmyk]{xcolor}\n';
+  } else if (style === 'IGO') {
+    content += '\\usepackage{igo}\n';
   }
 
+  content +=
+    '\\setlength{\\parindent}{0pt}\n' +
+    '\\title{Go Game Guru: Easy Problems}\n' +
+    '\\author{GoGameGuru}\n' +
+    '\\date{ }\n' +
+    '\n' +
+    '\\begin{document}\n' +
+    '\\maketitle\n' +
+    '\\tableofcontents\n';
 
-  content += '\\begin{document}\n'
+  problems = '';
+  answers = '';
 
-  // TODO(kashomon): There should probably be generally looping functionality.
+  var latexNewline = '\\\\\n';
+  bookMaker.forEachDiagram((idx, config) => {
+    var m = config.metadata;
+    var filename = idFn(style, config.id);
+    var d = '';
+    d +=
+        '\\begin{minipage}[t]{0.5\\textwidth}\n' +
+        '  {\\centering\n';
+    d += '  \\input{' + filename + '}\n'
+    if (style === 'IGO') {
+      d += '\\\\\n'
+    }
+    d += 'Problem: (' + config.basePosIndex + ')' + latexNewline;
+    if (m.comment) {
+      d += m.comment + latexNewline;
+    }
+    d +=
+        '  }\n' + // end centering
+        '\\end{minipage}\n'
 
-  // TODO(kashomon): this functionality (lookup) should be part of the API.
-  var idToMeta = {};
-  diagramMeta.forEach(m => {
-    idToMeta[m.id] = m;
-  })
+    if (config.hasLabel('PROBLEM_ROOT')) {
+      problems += d;
+    } else {
+      answers += d;
+    }
+  });
 
-  // TODO(kashomon): Functionality should be added to the API to generate the
-  // collision labels.
-
-  var index = 1;
-  // TODO(kashomon): Alias lookup should be part of the API.
-  var aliasToProbIndex = {};
-  spec.rootGrouping.positions.forEach(pos => {
-    var gen = spec.rootGrouping.generated[pos.id]
-    if (!gen) { return; }
-    gen.positions.forEach(g => {
-      if (g.labels[0] === 'PROBLEM_ROOT') {
-        var meta = idToMeta[g.id]
-        aliasToProbIndex[g.alias] = index;
-        comment = meta.comment;
-        if (comment) {
-          comment = comment + '\\\\';
-        }
-        content +=
-          '\\begin{minipage}[t]{0.5\\textwidth}\n' +
-          '  {\\centering\n' +
-          '  \\input{' + idFn(style, g.id) + '}\n'
-        if (style === 'IGO') {
-          content += '\\\\\n'
-        }
-
-        content += '  Problem: (' + index + ')\\\\\n' +
-          '  ' + comment + '\n' +
-          '  }\n' +
-          '\\end{minipage}\n'
-        index++;
-      }
-    });
-  })
-
-  // TODO(kashomon): Currently there's not a good way to associate diagram
-  // metadata back to the original SGF. Concretely, there's not a good way to
-  // associate the problem answer with the problem, if you're just looking at
-  // the metadata.
-  spec.rootGrouping.positions.forEach(pos => {
-    var gen = spec.rootGrouping.generated[pos.id]
-    if (!gen) { return; }
-    gen.positions.forEach(g => {
-      if (g.labels[0] !== 'PROBLEM_ROOT') {
-        var meta = idToMeta[g.id]
-        comment = meta.comment;
-        if (comment) {
-          comment = comment + '\\\\';
-        }
-        index = aliasToProbIndex[g.alias];
-        content +=
-          '\\begin{minipage}[t]{0.5\\textwidth}\n' +
-          '  {\\centering\n' +
-          '  \\input{' + idFn(style, g.id) + '}\n'
-
-        content += '  Problem: (' + index + ')\\\\\n' +
-          '  ' + comment + '\n' +
-          '  }\n' +
-          '\\end{minipage}\n'
-        index++;
-      }
-    });
-  })
+  content += '\\part{Problems!}\n';
+  content += problems;
+  content += '\\part{Answers!}\n';
+  content += answers;
 
   content += '\\end{document}'
   return content;
