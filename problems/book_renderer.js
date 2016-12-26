@@ -5,6 +5,10 @@
  * idFn: function to transform IDs to filenames
  */
 var renderBook = function(style, bookMaker, idFn) {
+  if (style == 'SMARTGO') {
+    return renderSmartGo(bookMaker);
+  }
+
   var content = '\\documentclass[11pt]{article}\n';
 
   if (style == 'GNOS') {
@@ -64,7 +68,47 @@ var renderBook = function(style, bookMaker, idFn) {
   return content;
 };
 
+var renderSmartGo = function(bookMaker) {
+  var content =
+    '::book(#ggg-easy-probs) title="Go Game Guru: Easy Problems" author="Kashomon"\n' +
+    '\n' +
+    '::h1 break=none #title#\n' +
+    '\n';
 
+  var problems = '';
+  var answers = '';
+
+  bookMaker.forEachDiagram((idx, config) => {
+    var m = config.metadata;
+    var d = config.diagram;
+    d += '\n\n';
+    var comment = m.comment;
+    if (config.hasLabel('CORRECT')) {
+      // Usually the text contains 'Correct'.
+      // comment += 'Correct.';
+    } else if (config.hasLabel('INCORRECT')) {
+      if (comment) { comment += ' Incorrect.' }
+      else { comment = 'Incorrect.' }
+    }
+    if (comment) {
+      d += comment + '\n\n';
+    }
+
+    if (config.hasLabel('PROBLEM_ROOT')) {
+      problems += d;
+    } else {
+      answers += d;
+    }
+  });
+  content +=
+    '::h2 The Problems\n' +
+    '\n' +
+    problems +
+    '::h2 The Answers \n' +
+    '\n' +
+    answers;
+  return content;
+};
 
 module.exports = {
   render: renderBook

@@ -52,19 +52,26 @@ var g = gpub.init({
   .createSpec()
   .processSpec();
 
-// TODO(kashomon): Should this logic be included in the gpub API?
-for (var style in {'IGO':1, 'GNOS':1}) {
-  var g = g.renderDiagramsStream(function(d) {
-        fs.writeFile(idFn(style, d.id), d.rendered)
-      }, {
-        diagramType: style,
-      })
-  var bookMaker = g.bookMaker();
+['IGO', 'GNOS', 'SMARTGO'].forEach((style) => {
+  var gr = g;
+  var extension = 'tex';
+  if (style === 'SMARTGO') {
+    extension = 'gobook';
+    gr = g.renderDiagrams({
+      diagramType: style
+    });
+  } else {
+    gr = g.renderDiagramsStream(function(d) {
+          fs.writeFile(idFn(style, d.id), d.rendered)
+        }, {
+          diagramType: style,
+        });
+  }
 
   fs.writeFileSync(
-    style.toLowerCase() + '/' + 'ggg_easy.tex',
-    book.render(style, bookMaker, idFn));
-}
+    style.toLowerCase() + '/' + 'ggg_easy.' + extension,
+    book.render(style, gr.bookMaker(), idFn));
+});
 
 // These steps not necessary, but here for illustration.
 // fs.writeFile('metadata.json', JSON.stringify(g.diagrams().metadata))
