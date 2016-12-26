@@ -82,17 +82,23 @@ var renderSmartGo = function(bookMaker) {
     var m = config.metadata;
     var d = config.diagram;
     d += '\n\n';
-    var comment = m.comment;
+    var comment = '**Problem ' + config.basePosIndex + '**';
+    var annot = config.collisionAnnotation();
+    if (annot) {
+      comment +=  '. __' + annot + '__';
+    }
+    comment += '\n\n'
+        + m.comment;
     if (config.hasLabel('CORRECT')) {
       // Usually the text contains 'Correct'.
       // comment += 'Correct.';
     } else if (config.hasLabel('INCORRECT')) {
-      if (comment) { comment += ' Incorrect.' }
-      else { comment = 'Incorrect.' }
+      if (m.comment) {
+        comment += ' ';
+      }
+      comment += 'Incorrect.';
     }
-    if (comment) {
-      d += comment + '\n\n';
-    }
+    d += comment + '\n\n';
 
     if (config.hasLabel('PROBLEM_ROOT')) {
       problems += d;
