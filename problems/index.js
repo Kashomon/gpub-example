@@ -4,40 +4,21 @@ var book = require('./book_renderer.js')
 
 var baseDir = __dirname
 
-var dir = baseDir + '/ggg-easy/';
-var out = baseDir + '/diagrams/';
+var sgfDir = baseDir + '/ggg-easy/';
+var out = baseDir + '/gen_diagrams/';
 
-if (!fs.existsSync(out)){
-  fs.mkdirSync(out);
-}
-
-var files = fs.readdirSync(dir)
-  .filter(f => f.endsWith('sgf'))
-  // Sort based on the number-suffix.
-  .sort((a, b) => {
-    var anum = parseInt(/\d+/g.exec(a), 10)
-    var bnum = parseInt(/\d+/g.exec(b), 10)
-    if (anum < bnum) {
-      return -1;
-    } else if (anum > bnum) {
-      return 1;
-    }
-    return 0;
-  });
-
-var contents = files.map(f => fs.readFileSync(dir + f, 'utf8'));
-
-// To make the filenames look nicer, replace the .sgf with _sgf.
-ids = files.map(f => f.replace(/\./g, '_'))
+var fnames = gpub.nodeutils.numberSuffixSort(gpub.nodeutils.listSgfs(sgfDir));
+var contents = gpub.nodeutils.fileContents(fnames, sgfDir);
+var ids = gpub.nodeutils.createFileIds(fnames);
 
 /**
  * Simple function that transforms IDs into diagram filenames
  */
 var idFuncMaker = (outDir) => {
   var base_ = baseDir;
-  return (style, id) => {
-    return base_ + '/' + style.toLowerCase() + '/diagrams/' +
-        id + '.out.tex';
+  return (style, id, ext) => {
+    return base_ + '/' + style.toLowerCase() + '/gen_diagrams/' +
+        id + '.out.' + ext;
   }
 };
 var idFn = idFuncMaker(out);
@@ -52,27 +33,24 @@ var g = gpub.init({
   .createSpec()
   .processSpec();
 
-['IGO', 'GNOS', 'SMARTGO'].forEach((style) => {
+['IGO', 'GNOS', 'SMARTGO', 'SVG'].forEach((style) => {
   var gr = g;
-  var extension = 'tex';
   if (style === 'SMARTGO') {
-    extension = 'gobook';
     gr = g.renderDiagrams({
       diagramType: style
     });
   } else {
     gr = g.renderDiagramsStream(function(d) {
-          fs.writeFile(idFn(style, d.id), d.rendered)
+          fs.writeFile(idFn(style, d.id, d.fileSuffix), d.rendered)
         }, {
           diagramType: style,
         });
   }
 
-  fs.writeFileSync(
-    style.toLowerCase() + '/' + 'ggg_easy.' + extension,
-    book.render(style, gr.bookMaker(), idFn));
+  var out = book.render(style, gr.bookMaker(), idFn);
+  if (style != 'SVG') {
+    fs.writeFileSync(
+      style.toLowerCase() + '/' + 'ggg_easy.' + out.ext,
+      out.content);
+  }
 });
-
-// These steps not necessary, but here for illustration.
-// fs.writeFile('metadata.json', JSON.stringify(g.diagrams().metadata))
-// fs.writeFileSync('gpub_spec.json', g.jsonSpec())

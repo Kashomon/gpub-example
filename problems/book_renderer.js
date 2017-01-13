@@ -6,7 +6,17 @@
  */
 var renderBook = function(style, bookMaker, idFn) {
   if (style == 'SMARTGO') {
-    return renderSmartGo(bookMaker);
+    return {
+      content: renderSmartGo(bookMaker),
+      ext: 'gobook',
+    }
+  }
+
+  if (style == 'SVG') {
+    return {
+      content: 'todo',
+      ext: 'epub',
+    }
   }
 
   var content = '\\documentclass[11pt]{article}\n';
@@ -65,7 +75,11 @@ var renderBook = function(style, bookMaker, idFn) {
   content += answers;
 
   content += '\\end{document}'
-  return content;
+
+  return {
+    content: content,
+    ext: 'tex',
+  }
 };
 
 var renderSmartGo = function(bookMaker) {

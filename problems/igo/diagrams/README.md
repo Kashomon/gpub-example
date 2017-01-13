@@ -1,1 +1,0 @@
-Generated IGO diagram fragments.
